@@ -705,7 +705,7 @@ def main():
         if eval_metric['score'] > best_bleu:
             previous_best = best_bleu
             best_bleu = eval_metric['score']
-            if epoch < args.num_train_epochs - 1:
+            if epoch < args.num_train_epochs:
                 accelerator.wait_for_everyone()
                 unwrapped_model = accelerator.unwrap_model(model)
                 unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
