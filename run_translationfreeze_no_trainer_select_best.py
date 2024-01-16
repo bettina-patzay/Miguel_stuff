@@ -701,6 +701,7 @@ def main():
         eval_metric = metric.compute()
         logger.info({"bleu": eval_metric['score']})
 
+        epoch_nr = epoch + 1
         if eval_metric['score'] > best_bleu:
             previous_best = best_bleu
             best_bleu = eval_metric['score']
@@ -710,16 +711,9 @@ def main():
                 unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
                 if accelerator.is_main_process:
                     tokenizer.save_pretrained(args.output_dir)
-            print(f'Model saved. bleu score: {best_bleu} previous best: {previous_best}')
-
-    """
-    if args.output_dir is not None:
-        accelerator.wait_for_everyone()
-        unwrapped_model = accelerator.unwrap_model(model)
-        unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
-        if accelerator.is_main_process:
-            tokenizer.save_pretrained(args.output_dir)
-    """
+            print(f'Epoch {epoch_nr}. Model saved. bleu score: {best_bleu} previous best: {previous_best}')
+        else:
+            print(f'Epoch {epoch_nr}. Model discarded. bleu score: {eval_metric["score"]} current best: {best_bleu}')
 
 if __name__ == "__main__":
 
